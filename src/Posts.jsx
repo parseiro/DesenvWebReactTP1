@@ -4,12 +4,8 @@ import PostsTable from "./PostsTable.jsx";
 import useSWR from 'swr';
 import {fetcher} from "./fetcher.js";
 
-function Posts() {
-  const {
-          data: posts,
-          error,
-          isLoading
-        } = useSWR('https://jsonplaceholder.typicode.com/posts', fetcher);
+function Posts({posts, error, isLoading, users}) {
+
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [perPage, setPerPage] = useState(3);
@@ -36,9 +32,11 @@ function Posts() {
           />
         </div>
         <div className="flex flex-col items-center justify-center text-center min-w-full">
-          <PostsTable posts={posts}
-                      page={page}
-                      perPage={perPage}
+          <PostsTable
+            posts={posts}
+            users={users}
+            page={page}
+            perPage={perPage}
           />
         </div>
       </>
