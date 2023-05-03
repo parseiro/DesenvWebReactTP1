@@ -6,7 +6,7 @@ function PostViewModal(props) {
 
   return (
     <Modal
-      id={`post-${id}`}
+      id={`viewPost-${id}`}
       show={false}
       position="center"
       size="md"

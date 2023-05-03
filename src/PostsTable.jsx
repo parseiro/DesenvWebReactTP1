@@ -35,7 +35,7 @@ function PostsTable(props) {
                     </Table.Cell>
                     <Table.Cell>
                       <button onClick={() => {
-                        const elementId = `post-${id}`;
+                        const elementId = `viewPost-${id}`;
                         let m = modals.get(elementId);
                         if (!m) {
                           const el = document.getElementById(elementId);
@@ -53,7 +53,7 @@ function PostsTable(props) {
                         title={title}
                         body={body}
                         onClose={() => {
-                          modals.get(`post-${id}`)?.hide();
+                          modals.get(`viewPost-${id}`)?.hide();
                         }}
                       />
                     </Table.Cell>
