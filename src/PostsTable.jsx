@@ -39,7 +39,7 @@ function PostsTable(props) {
                         let m = modals.get(elementId);
                         if (!m) {
                           const el = document.getElementById(elementId);
-                          m = new FlowbiteModal(el);
+                          m = new FlowbiteModal(el, { closable: false });
                           modals.set(elementId, m);
                         }
                         m?.show();
