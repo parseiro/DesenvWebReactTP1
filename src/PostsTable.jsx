@@ -26,7 +26,7 @@ function PostsTable(props) {
       <Table.Body className="divide-y">
         {posts?.filter((_, index) => index >= startIndex && index < endIndex)
               .map((post) => {
-                const {id, userId, title, body} = post;
+                const {id, userId, title} = post;
 
                 return (
                   <Table.Row
@@ -42,11 +42,15 @@ function PostsTable(props) {
                         let m = modals.get(elementId);
                         if (!m) {
                           const el = document.getElementById(elementId);
-                          m = new FlowbiteModal(el, { closable: false });
+                          m = new FlowbiteModal(el, {closable: false});
                           modals.set(elementId, m);
 
                           const editEl = document.getElementById(`editPost-${id}`);
-                          const editModal = new FlowbiteModal(editEl, { closable: false });
+                          const editModal = new FlowbiteModal(
+                            editEl, {
+                              placement: "center",
+                              closable: false,
+                            });
                           modals.set(`editPost-${id}`, editModal);
                         }
                         m?.show();
