@@ -24,7 +24,9 @@ function PostsTable(props) {
       </Table.Head>
       <Table.Body className="divide-y">
         {posts?.filter((_, index) => index >= startIndex && index < endIndex)
-              .map(({id, userId, title, body}) => {
+              .map((post) => {
+                const {id, userId, title, body} = post;
+
                 return (
                   <Table.Row
                     className="bg-white dark:border-gray-700 dark:bg-gray-800"
@@ -41,17 +43,19 @@ function PostsTable(props) {
                           const el = document.getElementById(elementId);
                           m = new FlowbiteModal(el, { closable: false });
                           modals.set(elementId, m);
+
+                          const editEl = document.getElementById(`editPost-${id}`);
+                          const editModal = new FlowbiteModal(editEl, { closable: false });
+                          modals.set(`editPost-${id}`, editModal);
                         }
                         m?.show();
                       }}>
                         {title}
                       </button>
                       <PostViewModal
-                        key={`modal-${id}`}
-                        id={id}
+                        key={`viewModal-${id}`}
+                        post={post}
                         user={users?.find(({id}) => id === userId)}
-                        title={title}
-                        body={body}
                         onClose={() => {
                           modals.get(`viewPost-${id}`)?.hide();
                         }}
