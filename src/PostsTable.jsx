@@ -2,6 +2,7 @@ import {Table} from "flowbite-react";
 import {Modal as FlowbiteModal} from "flowbite";
 import React from "react";
 import PostViewModal from "./PostViewModal.jsx";
+import PostEditModal from "./PostEditModal.jsx";
 
 function PostsTable(props) {
   const {posts, page, perPage, users} = props;
@@ -58,6 +59,18 @@ function PostsTable(props) {
                         user={users?.find(({id}) => id === userId)}
                         onClose={() => {
                           modals.get(`viewPost-${id}`)?.hide();
+                        }}
+                        onClickEdit={() => {
+                          modals.get(`viewPost-${id}`)?.hide();
+                          modals.get(`editPost-${id}`)?.show();
+                        }}
+                      />
+                      <PostEditModal
+                        key={`editModal-${id}`}
+                        post={post}
+                        users={users}
+                        onClose={() => {
+                          modals.get(`editPost-${id}`)?.hide();
                         }}
                       />
                     </Table.Cell>
