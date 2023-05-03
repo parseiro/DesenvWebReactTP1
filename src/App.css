@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+[data-testid="table-element"] {
+    @apply table-fixed w-full;
+}
+
+[data-testid="table-element"] th:first-child {
+    @apply w-[100px];
+}
