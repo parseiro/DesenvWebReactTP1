@@ -9,7 +9,7 @@ function PostViewModal(props) {
   return (
     <Modal
       id={`viewPost-${id}`}
-      show={false}
+      show
       position="center"
       size="md"
       onClose={onClose}

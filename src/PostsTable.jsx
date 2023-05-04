@@ -1,12 +1,9 @@
 // @ts-check
 import {Table} from "flowbite-react";
-import {Modal as FlowbiteModal} from "flowbite";
 import React from "react";
-import PostViewModal from "./PostViewModal.jsx";
-import PostEditModal from "./PostEditModal.jsx";
 
 function PostsTable(props) {
-  const {modals, posts, setPosts, page, perPage, users} = props;
+  const {setCurrentModal, posts, page, perPage} = props;
   const startIndex = (page - 1) * perPage;
   const endIndex = startIndex + perPage;
 
@@ -25,12 +22,9 @@ function PostsTable(props) {
       <Table.Body className="divide-y">
         {posts?.filter((_, index) => index >= startIndex && index < endIndex)
               .map((post, postIndex) => {
-                const {id: postId, userId, title} = post;
-                const viewPostLabel = `viewPost-${postId}`;
-                const editPostLabel = `editPost-${postId}`;
+                const {id: postId, title} = post;
 
-                return (
-                  <Table.Row
+                return (<Table.Row
                     className="bg-white dark:border-gray-700 dark:bg-gray-800"
                     key={postIndex}
                   >
@@ -38,57 +32,13 @@ function PostsTable(props) {
                       {postId}
                     </Table.Cell>
                     <Table.Cell>
-                      <button onClick={() => {
-                        const elementId = viewPostLabel;
-                        let m = modals.current.get(elementId);
-                        if (true || !m) {
-                          // console.log('Criando o modal para', elementId);
-                          const el = document.getElementById(elementId);
-                          m = new FlowbiteModal(el, {closable: false});
-                          modals.current.set(elementId, m);
-
-                          // console.log('Criando o modal para', editPostLabel);
-                          const editEl = document.getElementById(editPostLabel);
-                          const editModal = new FlowbiteModal(
-                            editEl, {
-                              placement: "center",
-                              closable: false,
-                            });
-                          modals.current.set(editPostLabel, editModal);
-                        }
-                        m?.show();
-                      }}>
+                      <button onClick={() => setCurrentModal({
+                        mode: 'view', post,
+                      })}>
                         {title}
                       </button>
-                      <PostViewModal
-                        // key={`viewModal-${id}`}
-                        post={post}
-                        user={users?.find((u) => u.id === userId)}
-                        onClose={() => {
-                          modals.current.get(viewPostLabel)?.hide();
-                        }}
-                        onClickEdit={() => {
-                          // console.log('Ocultando modal', viewPostLabel);
-                          modals.current.get(viewPostLabel)?.hide();
-                          // console.log('Abrindo o modal para', editPostLabel);
-                          modals.current.get(editPostLabel)?.show();
-                          // console.log(modals.current);
-                        }}
-                      />
-                      <PostEditModal
-                        key={`editModal-${postId}`}
-                        elementId={editPostLabel}
-                        post={post}
-                        users={users}
-                        onClose={() => {
-                          modals.current.get(editPostLabel)?.hide();
-                        }}
-                        posts={posts}
-                        setPosts={setPosts}
-                      />
                     </Table.Cell>
-                  </Table.Row>
-                );
+                  </Table.Row>);
               })}
       </Table.Body>
     </Table>

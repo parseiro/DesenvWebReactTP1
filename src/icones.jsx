@@ -30,7 +30,7 @@ export const loadingCircle = <>
   </svg>
 </>;
 
-export const editSymbol = <>
+export const createSymbol = <>
   <svg
     className="mr-1 -ml-1 w-6 h-6"
     fill="currentColor"

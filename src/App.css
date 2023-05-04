@@ -11,5 +11,6 @@
 }
 
 .balance {
+    /*noinspection CssInvalidPropertyValue*/
     text-wrap: balance;
 }
