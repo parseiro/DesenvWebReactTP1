@@ -5,6 +5,7 @@ import {useAsync} from "./useAsync.js";
 import {creator, deleter, patcher} from "./fetcher.js";
 import {deleteSymbol, createSymbol, loadingCircle} from "./icones.jsx";
 import * as Dialog from '@radix-ui/react-dialog';
+import * as Label from '@radix-ui/react-label';
 
 function PostEditModal(props) {
   const {post, setPost, users, onClose} = props;
@@ -125,12 +126,12 @@ function PostEditModal(props) {
               >
                 <div className="mb-4 flex flex-col gap-4">
                   <div>
-                    <label
+                    <Label.Root
                       htmlFor="title"
                       className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
                     >
                       Title
-                    </label>
+                    </Label.Root>
                     <input
                       type="text"
                       id="title"
@@ -141,12 +142,12 @@ function PostEditModal(props) {
                     />
                   </div>
                   <div>
-                    <label
+                    <Label.Root
                       htmlFor="body"
                       className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
                     >
                       Content
-                    </label>
+                    </Label.Root>
                     <textarea
                       id="body"
                       required={true}
@@ -163,7 +164,9 @@ function PostEditModal(props) {
                 <div className="flex justify-between">
                   <button
                     type="submit"
-                    className="inline-flex items-center rounded-lg px-5 text-center text-sm font-medium text-white bg-primary-700 py-2.5 hover:bg-primary-800 focus:ring-primary-300 focus:outline-none focus:ring-4 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                    className={`inline-flex items-center rounded-lg px-5 text-center text-sm font-medium text-white bg-primary-700 py-2.5 hover:bg-primary-800 focus:ring-primary-300 focus:outline-none focus:ring-4 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800
+                     ${!isValid && "opacity-50 cursor-not-allowed"}`}
+                    disabled={!isValid}
                   >
                     {statusPatch === "pending" && loadingCircle}
                     {statusPatch !== "pending" && createSymbol}

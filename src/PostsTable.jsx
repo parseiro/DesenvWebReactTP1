@@ -8,23 +8,24 @@ function PostsTable(props) {
   const endIndex = startIndex + perPage;
 
   return (<>
-    <Table striped
-           hoverable
-           className="w-full">
-      <Table.Head>
-        <Table.HeadCell className="text-center">
-          Post ID
-        </Table.HeadCell>
-        <Table.HeadCell className="min-w-[300px]">
-          Post title (click to show)
-        </Table.HeadCell>
-      </Table.Head>
-      <Table.Body className="divide-y">
-        {posts?.filter((_, index) => index >= startIndex && index < endIndex)
-              .map((post, postIndex) => {
-                const {id: postId, title} = post;
+    <div className="flex flex-col items-center justify-center text-center min-w-full">
+      <Table striped
+             hoverable
+             className="w-full">
+        <Table.Head>
+          <Table.HeadCell className="text-center">
+            Post ID
+          </Table.HeadCell>
+          <Table.HeadCell className="min-w-[300px]">
+            Post title (click to show)
+          </Table.HeadCell>
+        </Table.Head>
+        <Table.Body className="divide-y">
+          {posts?.filter((_, index) => index >= startIndex && index < endIndex)
+                .map((post, postIndex) => {
+                  const {id: postId, title} = post;
 
-                return (<Table.Row
+                  return (<Table.Row
                     className="bg-white dark:border-gray-700 dark:bg-gray-800"
                     key={postIndex}
                   >
@@ -39,9 +40,10 @@ function PostsTable(props) {
                       </button>
                     </Table.Cell>
                   </Table.Row>);
-              })}
-      </Table.Body>
-    </Table>
+                })}
+        </Table.Body>
+      </Table>
+    </div>
   </>);
 }
 

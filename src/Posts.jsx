@@ -1,10 +1,10 @@
 // @ts-check
 import React, {useEffect, useState} from "react";
 import {Pagination} from "flowbite-react";
-import PostsTable from "./PostsTable.jsx";
 import {createSymbol} from "./icones.jsx";
 import PostEditModal from "./PostEditModal.jsx";
 import PostViewModal from "./PostViewModal.jsx";
+import PostsCards from "./PostsCards.jsx";
 
 function Posts({posts, setPosts, error, isLoading, users, execute}) {
   const [page, setPage] = useState(1);
@@ -31,13 +31,12 @@ function Posts({posts, setPosts, error, isLoading, users, execute}) {
     execute();
   }, []);
 
-    // console.log('currentModal', currentModal);
+  // console.log('currentModal', currentModal);
 
   return <>
     {isLoading && <p>Loading...</p>}
     {error && <p>Error fetching posts</p>}
     {posts && (<>
-      <h1>All posts</h1>
 
       <button
         type="submit"
@@ -54,26 +53,41 @@ function Posts({posts, setPosts, error, isLoading, users, execute}) {
         New post
       </button>
 
-      <div className="flex flex-col items-center justify-center text-center">
-        <p>Page {page} of {totalPages}</p>
-        <Pagination
-          currentPage={page}
-          layout="navigation"
-          onPageChange={setPage}
-          showIcons={true}
-          totalPages={totalPages}
-        />
-      </div>
+      <section className="bg-white dark:bg-gray-900">
+        <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
+{/*          <div className="mx-auto max-w-screen-sm text-center mb-6 lg:mb-8">
+            <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
+              Our Blog
+            </h2>
+            <p className="font-light text-gray-500 sm:text-xl dark:text-gray-400">
+              We use an agile approach to test assumptions and connect with the needs
+              of your audience early and often.
+            </p>
+          </div>*/}
 
-      <div className="flex flex-col items-center justify-center text-center min-w-full">
-        <PostsTable
-          setCurrentModal={setCurrentModal}
-          posts={posts}
-          users={users}
-          page={page}
-          perPage={perPage}
-        />
-      </div>
+          <div className="flex flex-col items-center justify-center text-center mb-6">
+            <p>Page {page} of {totalPages}</p>
+            <Pagination
+              currentPage={page}
+              layout="navigation"
+              onPageChange={setPage}
+              showIcons={true}
+              totalPages={totalPages}
+            />
+          </div>
+
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <PostsCards
+              setCurrentModal={setCurrentModal}
+              posts={posts}
+              users={users}
+              page={page}
+              perPage={perPage}
+            />
+          </div>
+        </div>
+      </section>
+
       {currentModal && currentModal.mode === "view" && (<PostViewModal
         // key={`viewModal-${id}`}
         post={currentModal.post}
@@ -93,7 +107,8 @@ function Posts({posts, setPosts, error, isLoading, users, execute}) {
               setPosts((prev) => prev.filter((p) => p.id !== currentModal.post.id));
             } else if (currentModal.mode === 'new') {
               setPosts((prev) => [
-                savedPost, ...prev.filter((p) => p.id !== savedPost.id)
+                ...prev.filter((p) => p.id !== savedPost.id),
+                savedPost,
               ]);
             } else {
               setPosts((prev) => prev.map((p) => p.id === savedPost.id ? savedPost : p));
