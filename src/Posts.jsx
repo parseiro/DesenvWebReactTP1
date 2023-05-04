@@ -1,3 +1,4 @@
+// @ts-check
 import React, {useEffect, useState} from "react";
 import {Pagination} from "flowbite-react";
 import PostsTable from "./PostsTable.jsx";

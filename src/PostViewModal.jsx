@@ -1,3 +1,4 @@
+// @ts-check
 import React from "react";
 import {Button, Modal} from "flowbite-react";
 
@@ -14,7 +15,7 @@ function PostViewModal(props) {
       onClose={onClose}
     >
       <Modal.Header className="balance">
-        {title}
+        {title} - Post #{id}
       </Modal.Header>
       <Modal.Body>
         <div className="space-y-6">

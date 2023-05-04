@@ -1,3 +1,4 @@
+// @ts-check
 import './App.css';
 import Posts from "./Posts.jsx";
 import useSWR from "swr";
@@ -18,8 +19,9 @@ export default function App() {
           status,
         } = useAsync(() => fetcher('https://jsonplaceholder.typicode.com/posts'), false);
   const postsLoading = status === 'pending';
-
-  const [posts, setPosts] = useState(null);
+  
+  /** @type {any[], Function} */
+  const [posts, setPosts] = useState([]);
   const [nextId, setNextId] = useState(1);
 
   useEffect(() => {
@@ -29,7 +31,7 @@ export default function App() {
   }, [value]);
 
   useEffect(() => {
-    if (posts) {
+    if (posts && posts.length > 0) {
       let lastId = 0;
       posts.forEach((p) => {
         if (p.id > lastId) lastId = p.id;
@@ -45,7 +47,7 @@ export default function App() {
         } = useSWR('https://jsonplaceholder.typicode.com/users', fetcher);
 
   return (
-    <main className="mx-auto container h-screen flex flex-col items-center gap-3">
+    <main className="container flex flex-col items-center h-screen gap-3 mx-auto">
       <h1>All posts</h1>
       <button
         type="submit"
@@ -65,7 +67,7 @@ export default function App() {
         New post
       </button>
       <PostEditModal
-        // key={`editModal-${nextId}`}
+        key={`newModal-${nextId}`}
         elementId={`editPost-${nextId}`}
         isNew={true}
         post={{
