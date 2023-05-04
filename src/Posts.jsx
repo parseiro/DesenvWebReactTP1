@@ -1,14 +1,12 @@
 import React, {useEffect, useState} from "react";
 import {Pagination} from "flowbite-react";
 import PostsTable from "./PostsTable.jsx";
-import useSWR from 'swr';
-import {fetcher} from "./fetcher.js";
 
-function Posts({posts, error, isLoading, users}) {
+function Posts({modals, posts, setPosts, error, isLoading, users, execute}) {
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [perPage, setPerPage] = useState(3);
+  const [perPage] = useState(3);
 
   useEffect(() => {
     if (posts) {
@@ -16,6 +14,8 @@ function Posts({posts, error, isLoading, users}) {
       setTotalPages(Math.ceil(posts.length / perPage));
     }
   }, [posts]);
+
+  useEffect(() => {execute()}, []);
 
   return <>
     {isLoading && <p>Loading...</p>}
@@ -33,7 +33,9 @@ function Posts({posts, error, isLoading, users}) {
         </div>
         <div className="flex flex-col items-center justify-center text-center min-w-full">
           <PostsTable
+            modals={modals}
             posts={posts}
+            setPosts={setPosts}
             users={users}
             page={page}
             perPage={perPage}

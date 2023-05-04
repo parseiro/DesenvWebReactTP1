@@ -1,21 +1,86 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Button} from "flowbite-react";
+import {useAsync} from "./useAsync.js";
+import {deleter, patcher} from "./fetcher.js";
+import {deleteSymbol, editSymbol, loadingCircle} from "./icones.jsx";
 
 function PostEditModal(props) {
-  const {post, users, onClose} = props;
+  const {elementId, post, users, onClose, setPosts} = props;
+
+  const isNew = !!props.isNew;
 
   const [editingPost, setEditingPost] = useState(post);
   const {id, userId, title, body} = editingPost;
 
   const user = users?.find(({id}) => id === userId);
-  const isNew = id === 0;
+
+  const isValid = title?.length > 0 && body?.length > 0;
+
+  const address = `https://jsonplaceholder.typicode.com/posts/${post.id}`;
+  const {
+          execute: executePatch,
+          status: statusPatch,
+          value: valuePatch,
+          error: errorPatch
+        } =
+          useAsync(() => patcher(address, editingPost), false);
+
+  const {
+          execute: executeCreate,
+          status: statusCreate,
+          value: valueCreate,
+          error: errorCreate
+        } =
+          useAsync(() => patcher(address, editingPost), false);
+
+  const savedPost = valuePatch || valueCreate;
+
+  const {execute: executeDelete, status: statusDelete, error: errorDelete} =
+          useAsync(() => deleter(address), false);
+
+  let feedback = "";
+  if (statusPatch === "pending" || statusDelete === "pending" || statusCreate === "pending") {
+    feedback = "Saving...";
+  } else if (statusCreate === "error" || statusPatch === "error" || statusDelete === "error") {
+    const error = errorCreate || errorPatch || errorDelete;
+    feedback = `Error!: ${error}`;
+  }
 
   const handleChange = (event) => {
     const {id, value} = event.target;
     setEditingPost((prev) => ({...prev, [id]: value}));
   };
 
-  const elementId = `editPost-${id}`;
+  function onSubmit(e) {
+    e.preventDefault();
+    if (isValid && !isNew) executePatch();
+    if (isValid && isNew) executeCreate();
+  }
+
+  function onDelete() {
+    // console.log("onDelete");
+    executeDelete();
+  }
+
+  useEffect(() => {
+    if (savedPost) {
+      onClose(); // must close modal before updating the state
+      if (isNew) {
+        console.log('Recebi novo objeto', savedPost);
+        setPosts((prev) => [savedPost, ...prev.filter((p) => p.id !== savedPost.id)]);
+      } else {
+        setPosts((prev) => prev.map((p) => p.id === post.id ? savedPost : p));
+      }
+    }
+  }, [savedPost]);
+
+  useEffect(() => {
+    // if (statusDelete) console.log('statusDelete: ', statusDelete);
+    if (statusDelete === "success") {
+      onClose(); // must close modal before updating the state
+      setPosts((prev) => prev.filter((p) => p.id !== post.id));
+    }
+  }, [statusDelete]);
 
   return (
     <>
@@ -58,7 +123,7 @@ function PostEditModal(props) {
             {/* Modal body */}
             <form
               action="#"
-              onSubmit={(e) => e.preventDefault()}
+              onSubmit={onSubmit}
             >
               <div className="flex flex-col gap-4 mb-4">
                 <div>
@@ -99,33 +164,18 @@ function PostEditModal(props) {
               </div>
               <div className="flex justify-between">
                 <button
-                  type="button"
+                  type="submit"
                   className="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                 >
-                  <svg
-                    className="mr-1 -ml-1 w-6 h-6"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
+                  {statusPatch === "pending" && loadingCircle}
+                  {statusPatch !== "pending" && editSymbol}
                   Save
                 </button>
-                <Button color="red">
-                  <svg aria-hidden="true"
-                       className="w-5 h-5 mr-1.5 -ml-1"
-                       fill="currentColor"
-                       viewBox="0 0 20 20"
-                       xmlns="http://www.w3.org/2000/svg">
-                    <path fillRule="evenodd"
-                          d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                          clipRule="evenodd"></path>
-                  </svg>
+                <p>{feedback}</p>
+                <Button color="red"
+                        onClick={onDelete}>
+                  {statusDelete === "pending" && loadingCircle}
+                  {statusDelete !== "pending" && deleteSymbol}
                   Delete
                 </Button>
               </div>
