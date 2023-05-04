@@ -6,7 +6,7 @@ import {deleter, patcher} from "./fetcher.js";
 import {deleteSymbol, editSymbol, loadingCircle} from "./icones.jsx";
 
 function PostEditModal(props) {
-  const {elementId, post, users, onClose, setPosts} = props;
+  const {post, setPost, users, onClose} = props;
 
   const isNew = !!props.isNew;
 
@@ -65,21 +65,15 @@ function PostEditModal(props) {
 
   useEffect(() => {
     if (savedPost) {
-      onClose(); // must close modal before updating the state
-      if (isNew) {
-        console.log('Recebi novo objeto', savedPost);
-        setPosts((prev) => [savedPost, ...prev.filter((p) => p.id !== savedPost.id)]);
-      } else {
-        setPosts((prev) => prev.map((p) => p.id === post.id ? savedPost : p));
-      }
+      setPost(savedPost);
     }
   }, [savedPost]);
 
   useEffect(() => {
     // if (statusDelete) console.log('statusDelete: ', statusDelete);
     if (statusDelete === "success") {
-      onClose(); // must close modal before updating the state
-      setPosts((prev) => prev.filter((p) => p.id !== post.id));
+      setPost(null);
+      onClose();
     }
   }, [statusDelete]);
 
@@ -87,10 +81,9 @@ function PostEditModal(props) {
     <>
       {/* Main modal */}
       <div
-        id={elementId}
-        tabIndex={-1}
-        aria-hidden="true"
-        className="fixed top-0 left-0 right-0 z-50 items-center justify-center hidden w-full overflow-x-hidden overflow-y-auto md:inset-0 h-modal md:h-full"
+        // tabIndex={-1}
+        // aria-hidden="false"
+        className="fixed top-0 left-0 right-0 z-50 items-center justify-center w-full overflow-x-hidden overflow-y-auto md:inset-0 h-modal md:h-full"
       >
         <div className="relative w-full h-full max-w-2xl p-4 md:h-auto">
           {/* Modal content */}
