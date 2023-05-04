@@ -41,7 +41,7 @@ function PostsTable(props) {
                       <button onClick={() => {
                         const elementId = viewPostLabel;
                         let m = modals.current.get(elementId);
-                        if (!m) {
+                        if (true || !m) {
                           // console.log('Criando o modal para', elementId);
                           const el = document.getElementById(elementId);
                           m = new FlowbiteModal(el, {closable: false});
