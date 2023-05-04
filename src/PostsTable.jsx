@@ -68,7 +68,7 @@ function PostsTable(props) {
                         }}
                       />
                       <PostEditModal
-                        key={`editModal-${id}`}
+                        // key={`editModal-${id}`}
                         elementId={`editPost-${id}`}
                         post={post}
                         users={users}
