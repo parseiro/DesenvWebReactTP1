@@ -17,7 +17,7 @@ function PostEditModal(props) {
 
   const user = users?.find(({id}) => id === userId);
 
-  const isValid = title?.length > 0 && body?.length > 0;
+  const isValid = title?.trim().length > 0 && body?.trim().length > 0;
 
   const address = `https://jsonplaceholder.typicode.com/posts`;
   const {
