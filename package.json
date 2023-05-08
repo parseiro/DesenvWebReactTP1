@@ -20,6 +20,7 @@
     "@radix-ui/react-label": "^2.0.1",
     "flowbite": "^1.6.5",
     "flowbite-react": "^0.4.4",
+    "react-aria": "^3.24.0",
     "swr": "^2.1.5"
   },
   "devDependencies": {

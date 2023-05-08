@@ -1,14 +1,15 @@
 // @ts-check
 import React, {useEffect, useState} from "react";
-import {Button} from "flowbite-react";
+import Button from "./Button.jsx";
 import {useAsync} from "./useAsync.js";
 import {creator, deleter, patcher} from "./fetcher.js";
 import {deleteSymbol, createSymbol, loadingCircle} from "./icones.jsx";
 import * as Dialog from '@radix-ui/react-dialog';
 import * as Label from '@radix-ui/react-label';
+import {VisuallyHidden} from "react-aria";
 
 function PostEditModal(props) {
-  const {post, setPost, users, onClose} = props;
+  const {post, setPost, users, onClose, showViewPostModal} = props;
 
   const isNew = !!props.isNew;
 
@@ -47,8 +48,8 @@ function PostEditModal(props) {
   } else if (statusCreate === "error" || statusPatch === "error" || statusDelete === "error") {
     const error = errorCreate || errorPatch || errorDelete;
     feedback = `Error!: ${error}`;
-  } else if (statusPatch === "success" || statusCreate === "success") {
-    feedback = "Success, you may close";
+  } else if (statusCreate === "success" || statusPatch === "success") {
+    showViewPostModal(savedPost);
   }
 
   const handleChange = (event) => {
@@ -90,7 +91,7 @@ function PostEditModal(props) {
         <div
           tabIndex="-1"
           className="fixed top-0 right-0 left-0 z-50 w-full items-center justify-center overflow-y-auto overflow-x-hidden h-modal md:inset-0 md:h-full">
-          <div className="relative h-full w-full p-4 md:h-auto max-w-md mx-auto">
+          <div className="relative mx-auto h-full w-full max-w-md p-4 md:h-auto">
             {/* Modal content */}
             <Dialog.Content className="relative rounded-lg bg-white p-4 shadow dark:bg-gray-800 sm:p-5">
               {/* Modal header */}
@@ -98,10 +99,10 @@ function PostEditModal(props) {
                 <Dialog.Title className="text-lg font-semibold text-gray-900 dark:text-white">
                   {isNew ? `Create new post (id ${id})` : `Edit post (id ${id})`}
                 </Dialog.Title>
-                <button
+                <Button
                   type="button"
+                  onPress={onClose}
                   className="ml-auto inline-flex items-center rounded-lg bg-transparent text-sm text-gray-400 p-1.5 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white"
-                  onClick={onClose}
                 >
                   <svg
                     aria-hidden="true"
@@ -116,8 +117,10 @@ function PostEditModal(props) {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span className="sr-only">Close modal</span>
-                </button>
+                  <VisuallyHidden>
+                    Close modal
+                  </VisuallyHidden>
+                </Button>
               </div>
               {/* Modal body */}
               <form
@@ -162,20 +165,22 @@ function PostEditModal(props) {
                   {user && <p className="balance">{`Author: ${user.name}`}</p>}
                 </div>
                 <div className="flex justify-between">
-                  <button
+                  <Button
                     type="submit"
-                    className={`inline-flex items-center rounded-lg px-5 text-center text-sm font-medium text-white bg-primary-700 py-2.5 hover:bg-primary-800 focus:ring-primary-300 focus:outline-none focus:ring-4 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800
-                     ${!isValid && "opacity-50 cursor-not-allowed"}`}
-                    disabled={!isValid}
+                    className="inline-flex items-center rounded-lg px-5 text-center text-sm font-medium text-white bg-primary-700 py-2.5 hover:bg-primary-800 focus:ring-primary-300 focus:outline-none focus:ring-4 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                    isDisabled={!isValid}
                   >
-                    {statusPatch === "pending" && loadingCircle}
-                    {statusPatch !== "pending" && createSymbol}
-                    Save
-                  </button>
+                    {(statusPatch === "pending" || statusCreate === "pending") && loadingCircle}
+                    {!isNew && "Update"}
+                    {isNew && statusCreate !== "pending" && createSymbol}
+                    {isNew && "Create"}
+                  </Button>
                   <p>{feedback}</p>
                   {!isNew && (
-                    <Button color="red"
-                            onClick={onDelete}>
+                    <Button
+                      className="inline-flex items-center rounded-lg border border-red-700 px-5 text-center text-sm font-medium text-red-700 py-2.5 hover:bg-red-800 hover:text-white focus:outline-none focus:ring-4 focus:ring-red-300 dark:border-red-500 dark:text-red-500 dark:hover:bg-red-600 dark:hover:text-white dark:focus:ring-red-900"
+                      onPress={onDelete}
+                    >
                       {statusDelete === "pending" && loadingCircle}
                       {statusDelete !== "pending" && deleteSymbol}
                       Delete

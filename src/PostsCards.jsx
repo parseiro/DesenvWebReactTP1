@@ -1,11 +1,11 @@
 // @ts-check
-import {Table} from "flowbite-react";
 import React from "react";
 
 function PostsCards(props) {
-  const {setCurrentModal, posts, page, perPage, users} = props;
+  const {showViewPostModal, posts, page, perPage, users} = props;
   const startIndex = (page - 1) * perPage;
   const endIndex = startIndex + perPage;
+
 
   return (<>
     {posts?.filter((_, index) => index >= startIndex && index < endIndex)
@@ -17,9 +17,7 @@ function PostsCards(props) {
               <article
                 className="flex cursor-pointer flex-col items-start justify-between rounded-lg border border-gray-200 bg-white p-4 shadow-md dark:border-gray-700 dark:bg-gray-800"
                 key={postIndex}
-                onClick={() => setCurrentModal({
-                  mode: 'view', post,
-                })}
+                onClick={() => showViewPostModal(post)}
               >
                 <div>
                 <span

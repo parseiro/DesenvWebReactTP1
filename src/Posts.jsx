@@ -5,6 +5,7 @@ import {createSymbol} from "./icones.jsx";
 import PostEditModal from "./PostEditModal.jsx";
 import PostViewModal from "./PostViewModal.jsx";
 import PostsCards from "./PostsCards.jsx";
+import Button from "./Button.jsx";
 
 function Posts({posts, setPosts, error, isLoading, users, execute}) {
   const [page, setPage] = useState(1);
@@ -33,29 +34,38 @@ function Posts({posts, setPosts, error, isLoading, users, execute}) {
 
   // console.log('currentModal', currentModal);
 
+  function showCreatePostModal() {
+    const nextId = posts?.reduce((acc, {id}) => Math.max(acc, id), 0) + 1;
+    setCurrentModal({
+      mode: 'new', post: {id: nextId, userId: 1, title: "", body: ""}
+    });
+  }
+
+  function showViewPostModal(post) {
+    return setCurrentModal({...currentModal, mode: 'view', post});
+  }
+
+  function showEditPostModal(post) {
+    return setCurrentModal({...currentModal, mode: 'edit', post});
+  }
+
   return <>
     {isLoading && <p>Loading...</p>}
     {error && <p>Error fetching posts</p>}
     {posts && (<>
 
-      <button
+      <Button
         type="submit"
         className="text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-        onClick={() => {
-          // if (currentModal) throw new Error('I already have an open modal');
-          const nextId = posts?.reduce((acc, {id}) => Math.max(acc, id), 0) + 1;
-          setCurrentModal({
-            mode: 'new', post: {id: nextId, userId: 1, title: "", body: ""}
-          });
-        }}
+        onPress={() => showCreatePostModal()}
       >
         {createSymbol}
         New post
-      </button>
+      </Button>
 
       <section className="bg-white dark:bg-gray-900">
         <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
-{/*          <div className="mx-auto max-w-screen-sm text-center mb-6 lg:mb-8">
+          {/*          <div className="mx-auto max-w-screen-sm text-center mb-6 lg:mb-8">
             <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
               Our Blog
             </h2>
@@ -78,7 +88,7 @@ function Posts({posts, setPosts, error, isLoading, users, execute}) {
 
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             <PostsCards
-              setCurrentModal={setCurrentModal}
+              showViewPostModal={showViewPostModal}
               posts={posts}
               users={users}
               page={page}
@@ -93,11 +103,12 @@ function Posts({posts, setPosts, error, isLoading, users, execute}) {
         post={currentModal.post}
         user={users?.find((u) => u.id === currentModal.post.userId)}
         onClose={() => setCurrentModal(null)}
-        onClickEdit={() => setCurrentModal(prev => ({...prev, mode: "edit"}))}
+        onClickEdit={() => showEditPostModal(currentModal.post)}
       />)}
       {currentModal && (currentModal.mode === "edit" || currentModal.mode === "new") && (
         <PostEditModal
           key={`editModal-${currentModal.post.postId}`}
+          showViewPostModal={showViewPostModal}
           post={currentModal.post}
           isNew={currentModal.mode === "new"}
           users={users}
