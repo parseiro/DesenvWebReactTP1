@@ -9,7 +9,7 @@ import * as Label from '@radix-ui/react-label';
 import {VisuallyHidden} from "react-aria";
 
 function PostEditModal(props) {
-  const {post, setPost, users, onClose, showViewPostModal} = props;
+  const {post, setPost, users, onClose, showViewPostModal, isOpen} = props;
 
   const isNew = !!props.isNew;
 
@@ -83,7 +83,7 @@ function PostEditModal(props) {
   }, [statusDelete]);
 
   return (
-    <Dialog.Root open
+    <Dialog.Root open={isOpen}
                  modal>
       <Dialog.Portal>
         <Dialog.Overlay
@@ -95,7 +95,7 @@ function PostEditModal(props) {
             {/* Modal content */}
             <Dialog.Content className="relative rounded-lg bg-white p-4 shadow dark:bg-gray-800 sm:p-5">
               {/* Modal header */}
-              <div className="mb-4 flex items-center justify-between rounded-t border-b pb-4 dark:border-gray-600 sm:mb-5">
+              <div className="mb-4 flex items-center justify-between rounded-t border-b pb-4 dark:border-gray-600 sm:mb-5 balance">
                 <Dialog.Title className="text-lg font-semibold text-gray-900 dark:text-white">
                   {isNew ? `Create new post (id ${id})` : `Edit post (id ${id})`}
                 </Dialog.Title>

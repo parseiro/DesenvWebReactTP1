@@ -7,12 +7,18 @@ import PostViewModal from "./PostViewModal.jsx";
 import PostsCards from "./PostsCards.jsx";
 import Button from "./Button.jsx";
 
+const closedModal = {mode: 'closed', post: {id: 0, title: '', body: ''}};
+
 function Posts({posts, setPosts, error, isLoading, users, execute}) {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [perPage] = useState(3);
 
-  const [currentModal, setCurrentModal] = useState(null);
+  const [currentModal, setCurrentModal] = useState(closedModal);
+
+  function closeModal() {
+    setCurrentModal(closedModal);
+  }
 
   useEffect(() => {
     if (posts && posts.length > 0) {
@@ -47,6 +53,19 @@ function Posts({posts, setPosts, error, isLoading, users, execute}) {
 
   function showEditPostModal(post) {
     return setCurrentModal({...currentModal, mode: 'edit', post});
+  }
+
+  function savePost(savedPost) {
+    if (savedPost === null) {
+      setPosts((prev) => prev.filter((p) => p.id !== currentModal?.post.id));
+    } else if (currentModal?.mode === 'new') {
+      setPosts((prev) => [
+        ...prev.filter((p) => p.id !== savedPost.id),
+        savedPost,
+      ]);
+    } else {
+      setPosts((prev) => prev.map((p) => p.id === savedPost.id ? savedPost : p));
+    }
   }
 
   return <>
@@ -98,34 +117,24 @@ function Posts({posts, setPosts, error, isLoading, users, execute}) {
         </div>
       </section>
 
-      {currentModal && currentModal.mode === "view" && (<PostViewModal
+      <PostViewModal
+        isOpen={currentModal.mode === "view"}
         // key={`viewModal-${id}`}
-        post={currentModal.post}
-        user={users?.find((u) => u.id === currentModal.post.userId)}
-        onClose={() => setCurrentModal(null)}
-        onClickEdit={() => showEditPostModal(currentModal.post)}
-      />)}
-      {currentModal && (currentModal.mode === "edit" || currentModal.mode === "new") && (
-        <PostEditModal
-          key={`editModal-${currentModal.post.postId}`}
-          showViewPostModal={showViewPostModal}
-          post={currentModal.post}
-          isNew={currentModal.mode === "new"}
-          users={users}
-          onClose={() => setCurrentModal(null)}
-          setPost={(savedPost) => {
-            if (savedPost === null) {
-              setPosts((prev) => prev.filter((p) => p.id !== currentModal.post.id));
-            } else if (currentModal.mode === 'new') {
-              setPosts((prev) => [
-                ...prev.filter((p) => p.id !== savedPost.id),
-                savedPost,
-              ]);
-            } else {
-              setPosts((prev) => prev.map((p) => p.id === savedPost.id ? savedPost : p));
-            }
-          }}
-        />)}
+        post={currentModal?.post}
+        user={users?.find((u) => u.id === currentModal?.post.userId)}
+        onClose={closeModal}
+        onClickEdit={() => showEditPostModal(currentModal?.post)}
+      />
+      <PostEditModal
+        isOpen={currentModal?.mode === "edit" || currentModal?.mode === "new"}
+        key={`editModal-${currentModal?.post?.postId}`}
+        showViewPostModal={showViewPostModal}
+        post={currentModal?.post}
+        isNew={currentModal?.mode === "new"}
+        users={users}
+        onClose={closeModal}
+        setPost={(post) => savePost(post)}
+      />
     </>)}
   </>;
 }
